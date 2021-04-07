@@ -6,8 +6,9 @@ f = open('租房信息.csv', mode='a', encoding='gbk', newline='')
 csc_writer = csv.DictWriter(f, fieldnames=['表题', '基本信息', '地区', '价格'])
 csc_writer.writeheader()
 
-for page in range(1, 12):
-    time.sleep(1.5)
+for page in range(1, 35):
+    print(f'-------------------------------------------正爬取{page}页码-------------------------------------')
+    # time.sleep(1.5)
     url = f'http://cs.ganji.com/zufang/0/pn{page}/'
     headers = {
         'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1'}
@@ -36,4 +37,6 @@ for page in range(1, 12):
             '地区': feature,
             '价格': price
         }
-        csc_writer.writerow(dic)
+        # csc_writer.writerow(dic)
+
+        print(title, info_str, info_address, listings, feature, info_href, sep=' / ')
