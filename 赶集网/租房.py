@@ -14,8 +14,12 @@ divs = selector.css('.f-list div.ershoufang-list')
 for index in divs:
     title = index.css('.title a::text').get()
     info_list = index.css('.size span::text').getall()
+    # 列表转str
     info_str = ','.join(info_list)
-    address = index.css('.area a span::text').get()
-    listings = index.css(' dl>dd:nth-child(5) span span::text').get()
-    print(info_str, address, sep='/')
+    info_address = index.css('.area a span::text').get()
+    # dl下的dd模块 第5个
+    listings = index.css('dl>dd:nth-child(5) span span::text').get()
+
+    info_href = index.css('.title a::attr(href)').get()
+    print(info_str, info_address, info_href, sep='/')
     break
