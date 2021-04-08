@@ -1,0 +1,88 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+<div id="content_views" class="htmledit_views clearfix">
+                        <link rel="stylesheet" href="https://csdnimg.cn/release/blogv2/dist/mobile/css/edit_views_html-b7fdf59250.min.css">
+                        <p>在云服务创建一个虚拟环境</p> 
+<p>```python<br> virtualenv envname</p> 
+<p>source 进入虚拟环境</p> 
+<p>安装scrapyd  pip install scrapyd</p> 
+<p>安装scrapy  pip install scrapy</p> 
+<p>安装scrapy  pip install requests</p> 
+<p>启动命令 scrapyd </p> 
+<p>需要改一下配置<br> find -name default_scrapyd.conf 查询文件位置</p> 
+<p>./lib/python3.5/site-packages/scrapyd/default_scrapyd.conf<br> 一般都是这个路径</p> 
+<p>\Lib\site-packages\scrapyd中的default_scrapyd.conf：<br> 将bind_address = 127.0.0.1改为bind_address = 0.0.0.0</p> 
+<p>运行scrapyd  不能关闭程序  注意~~~</p> 
+<p>将工程打包</p> 
+<p>安装pip install scrapyd-client 打包工具</p> 
+<p>cd 到项目工程目录下 执行 scrapyd-deploy  </p> 
+<p>出现 default 表示成功</p> 
+<p>进入scrapy.cfg文件</p> 
+<p>将url的路由地址改成ip地址  也可以给deploy加上一个名字 ：p1</p> 
+<p>保持退出  执行 scrapyd-deploy -l</p> 
+<p>执行打包  scrapy list</p> 
+<p>如果给爬虫取名了 需要执行一下  scrapyd-deploy 取的名字 -p 项目名</p> 
+<p>出现 "status": "ok"  就表示打包成功了</p> 
+<p>    <br> 执行下面这条语句<br> curl http://localhost:6800/schedule.json -d project=项目名 -d spider=爬虫名</p> 
+<p>        <br> 停止爬虫    <br> curl http://localhost:6800/cancel.json  -d project=项目名称 -d job=运行ID</p> 
+<p>删除scrapy项目<br> curl http://localhost:6800/delproject.json-d project=scrapy项目名称<br> ```</p> 
+<p>分布式爬虫</p> 
+<p>```python<br> pip install gerapy</p> 
+<p>安装好之后 执行gerapy可以获得提示<br> 初始化gerapy<br> gerapy init</p> 
+<p>会在当前目录下生成一个gerapy的文件夹</p> 
+<p>生产迁移之后  gerapy migrate</p> 
+<p>cd进入 将爬虫项目放到改目录下</p> 
+<p>运行<br> gerapy runserver 0.0.0.0:8000<br> ```</p>
+                        </div>
+</body>
+</html>
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+<div id="content_views" class="htmledit_views clearfix">
+                        <link rel="stylesheet" href="https://csdnimg.cn/release/blogv2/dist/mobile/css/edit_views_html-b7fdf59250.min.css">
+                        <p>在云服务创建一个虚拟环境</p> 
+<p>```python<br> virtualenv envname</p> 
+<p>source 进入虚拟环境</p> 
+<p>安装scrapyd  pip install scrapyd</p> 
+<p>安装scrapy  pip install scrapy</p> 
+<p>安装scrapy  pip install requests</p> 
+<p>启动命令 scrapyd </p> 
+<p>需要改一下配置<br> find -name default_scrapyd.conf 查询文件位置</p> 
+<p>./lib/python3.5/site-packages/scrapyd/default_scrapyd.conf<br> 一般都是这个路径</p> 
+<p>\Lib\site-packages\scrapyd中的default_scrapyd.conf：<br> 将bind_address = 127.0.0.1改为bind_address = 0.0.0.0</p> 
+<p>运行scrapyd  不能关闭程序  注意~~~</p> 
+<p>将工程打包</p> 
+<p>安装pip install scrapyd-client 打包工具</p> 
+<p>cd 到项目工程目录下 执行 scrapyd-deploy  </p> 
+<p>出现 default 表示成功</p> 
+<p>进入scrapy.cfg文件</p> 
+<p>将url的路由地址改成ip地址  也可以给deploy加上一个名字 ：p1</p> 
+<p>保持退出  执行 scrapyd-deploy -l</p> 
+<p>执行打包  scrapy list</p> 
+<p>如果给爬虫取名了 需要执行一下  scrapyd-deploy 取的名字 -p 项目名</p> 
+<p>出现 "status": "ok"  就表示打包成功了</p> 
+<p>    <br> 执行下面这条语句<br> curl http://localhost:6800/schedule.json -d project=项目名 -d spider=爬虫名</p> 
+<p>        <br> 停止爬虫    <br> curl http://localhost:6800/cancel.json  -d project=项目名称 -d job=运行ID</p> 
+<p>删除scrapy项目<br> curl http://localhost:6800/delproject.json-d project=scrapy项目名称<br> ```</p> 
+<p>分布式爬虫</p> 
+<p>```python<br> pip install gerapy</p> 
+<p>安装好之后 执行gerapy可以获得提示<br> 初始化gerapy<br> gerapy init</p> 
+<p>会在当前目录下生成一个gerapy的文件夹</p> 
+<p>生产迁移之后  gerapy migrate</p> 
+<p>cd进入 将爬虫项目放到改目录下</p> 
+<p>运行<br> gerapy runserver 0.0.0.0:8000<br> ```</p>
+                        </div>
+</body>
+</html>

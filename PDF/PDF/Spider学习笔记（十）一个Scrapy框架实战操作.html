@@ -1,0 +1,240 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+<div id="content_views" class="htmledit_views clearfix">
+                        <link rel="stylesheet" href="https://csdnimg.cn/release/blogv2/dist/mobile/css/edit_views_html-b7fdf59250.min.css">
+                        <h3>爬取目标：爬取某论坛评论中的所有邮箱</h3> 
+<p>首先，创建Scrapy工程和项目</p> 
+<p>在cmd命令中输入如下命令：</p> 
+<p>scrapy startproject tianya（工程名）</p> 
+<p><img alt="" class="has" height="159" src="https://img-blog.csdn.net/20180822205646548?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9odW9jaGUxNzU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" width="961"></p> 
+<p>scrapy genspider mytianya  "bbs.tianya.cn"(生成mytianya.py文件)(爬取的域名范围)</p> 
+<p><img alt="" class="has" height="66" src="https://img-blog.csdn.net/20180822210141446?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9odW9jaGUxNzU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" width="499"></p> 
+<p>在工程目录下生成一个start.py文件，方便程序的运行，并编写一下内容在文件中</p> 
+<p><img alt="" class="has" height="128" src="https://img-blog.csdn.net/20180822210323689?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9odW9jaGUxNzU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" width="161"></p> 
+<pre class="has"><code class="language-python">import scrapy.cmdline
+
+scrapy.cmdline.execute(['scrapy','crawl','mytianya'])</code></pre> 
+<p>使用效果等同于在cmd中输入命令：</p> 
+<p><img alt="" class="has" height="27" src="https://img-blog.csdn.net/20180822210647561?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9odW9jaGUxNzU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" width="344"></p> 
+<p> </p> 
+<p>在items.py文件中创建爬取目标，代码如下<br></p> 
+<pre class="has"><code class="language-python">import scrapy
+
+
+class TianyaItem(scrapy.Item):
+    # define the fields for your item here like:
+    # name = scrapy.Field()
+    # 爬取目标
+    email = scrapy.Field()  # 邮箱
+    pass
+</code></pre> 
+<p>在mytianya.py写爬取逻辑，代码如下</p> 
+<pre class="has"><code>import re
+from tianya.items import TianyaItem
+import scrapy
+
+class MytianyaSpider(scrapy.Spider):
+    name = 'mytianya'
+    allowed_domains = ['bbs.tianya.cn']
+    start_urls = ['http://bbs.tianya.cn/post-140-393968-1.shtml']
+
+    def parse(self, response):
+        #z邮箱正则
+        emailRe = "[a-z0-9_]+@[a-z0-9]+\.[a-z]{2,4}"
+        print(response.text)
+        html = response.body.decode('utf-8')
+        
+        #获得邮箱列表
+        emailList = re.findall(emailRe,html,re.I)
+        print(emailList)
+        
+        #实例
+        item = TianyaItem()
+        
+        item["email"] = emailList
+
+        #返回你的存储对象
+        for e in emailList:
+            item["email"] = e.strip()
+            yield item
+</code></pre> 
+<p>在pipelines.py设计管道存储爬取内容：</p> 
+<pre class="has"><code class="language-python">class TianyaPipeline(object):
+
+    def __init__(self):
+        pass
+
+    def open_spider(self, spider):
+        '''
+        爬虫开启的时候调用 一次
+        :param spider:
+        :return:
+        '''
+
+        self.f = open('tianya.txt', 'w', encoding='utf-8', errors='ignore')
+
+    # 持久化
+    def process_item(self, item, spider):
+        '''
+        写入txt
+        :param item: 存储对象
+        :param spider: 爬虫名
+        :return:
+        '''
+
+        # with open("tianya.txt", 'a+', encoding='utf-8', errors='ignore') as f:
+        #     f.write(item['email'])
+
+        self.f.write(item['email'] + '\n')
+
+        # 被处理过的item，下次我就不存了
+        # 一定要有
+        return item
+
+    def close_spider(self, spider):
+        '''
+        爬虫关闭的时候 一次
+        :param spider:
+        :return:
+        '''
+
+        self.f.close()
+
+    def __del__(self):
+        pass</code></pre> 
+<p>储存效果：</p> 
+<p><img alt="" class="has" height="432" src="https://img-blog.csdn.net/20180822214930661?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9odW9jaGUxNzU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" width="545"></p> 
+<p>scrapy保存信息的最简单的方法主要有四种，-o 输出指定格式的文件，，命令如下：</p> 
+<p>```<br> scrapy crawl mytianya -o mytianya.json</p> 
+<p>scrapy crawl mytianya -o mytianya.csv</p> 
+<p>scrapy crawl mytianya -o mytianya.xml</p> 
+<p><img alt="" class="has" height="436" src="https://img-blog.csdn.net/20180822215307619?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9odW9jaGUxNzU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" width="812"><img alt="" class="has" height="143" src="https://img-blog.csdn.net/20180822215300717?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9odW9jaGUxNzU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" width="787"></p>
+                        </div>
+</body>
+</html>
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+<div id="content_views" class="htmledit_views clearfix">
+                        <link rel="stylesheet" href="https://csdnimg.cn/release/blogv2/dist/mobile/css/edit_views_html-b7fdf59250.min.css">
+                        <h3>爬取目标：爬取某论坛评论中的所有邮箱</h3> 
+<p>首先，创建Scrapy工程和项目</p> 
+<p>在cmd命令中输入如下命令：</p> 
+<p>scrapy startproject tianya（工程名）</p> 
+<p><img alt="" class="has" height="159" src="https://img-blog.csdn.net/20180822205646548?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9odW9jaGUxNzU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" width="961"></p> 
+<p>scrapy genspider mytianya  "bbs.tianya.cn"(生成mytianya.py文件)(爬取的域名范围)</p> 
+<p><img alt="" class="has" height="66" src="https://img-blog.csdn.net/20180822210141446?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9odW9jaGUxNzU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" width="499"></p> 
+<p>在工程目录下生成一个start.py文件，方便程序的运行，并编写一下内容在文件中</p> 
+<p><img alt="" class="has" height="128" src="https://img-blog.csdn.net/20180822210323689?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9odW9jaGUxNzU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" width="161"></p> 
+<pre class="has"><code class="language-python">import scrapy.cmdline
+
+scrapy.cmdline.execute(['scrapy','crawl','mytianya'])</code></pre> 
+<p>使用效果等同于在cmd中输入命令：</p> 
+<p><img alt="" class="has" height="27" src="https://img-blog.csdn.net/20180822210647561?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9odW9jaGUxNzU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" width="344"></p> 
+<p> </p> 
+<p>在items.py文件中创建爬取目标，代码如下<br></p> 
+<pre class="has"><code class="language-python">import scrapy
+
+
+class TianyaItem(scrapy.Item):
+    # define the fields for your item here like:
+    # name = scrapy.Field()
+    # 爬取目标
+    email = scrapy.Field()  # 邮箱
+    pass
+</code></pre> 
+<p>在mytianya.py写爬取逻辑，代码如下</p> 
+<pre class="has"><code>import re
+from tianya.items import TianyaItem
+import scrapy
+
+class MytianyaSpider(scrapy.Spider):
+    name = 'mytianya'
+    allowed_domains = ['bbs.tianya.cn']
+    start_urls = ['http://bbs.tianya.cn/post-140-393968-1.shtml']
+
+    def parse(self, response):
+        #z邮箱正则
+        emailRe = "[a-z0-9_]+@[a-z0-9]+\.[a-z]{2,4}"
+        print(response.text)
+        html = response.body.decode('utf-8')
+        
+        #获得邮箱列表
+        emailList = re.findall(emailRe,html,re.I)
+        print(emailList)
+        
+        #实例
+        item = TianyaItem()
+        
+        item["email"] = emailList
+
+        #返回你的存储对象
+        for e in emailList:
+            item["email"] = e.strip()
+            yield item
+</code></pre> 
+<p>在pipelines.py设计管道存储爬取内容：</p> 
+<pre class="has"><code class="language-python">class TianyaPipeline(object):
+
+    def __init__(self):
+        pass
+
+    def open_spider(self, spider):
+        '''
+        爬虫开启的时候调用 一次
+        :param spider:
+        :return:
+        '''
+
+        self.f = open('tianya.txt', 'w', encoding='utf-8', errors='ignore')
+
+    # 持久化
+    def process_item(self, item, spider):
+        '''
+        写入txt
+        :param item: 存储对象
+        :param spider: 爬虫名
+        :return:
+        '''
+
+        # with open("tianya.txt", 'a+', encoding='utf-8', errors='ignore') as f:
+        #     f.write(item['email'])
+
+        self.f.write(item['email'] + '\n')
+
+        # 被处理过的item，下次我就不存了
+        # 一定要有
+        return item
+
+    def close_spider(self, spider):
+        '''
+        爬虫关闭的时候 一次
+        :param spider:
+        :return:
+        '''
+
+        self.f.close()
+
+    def __del__(self):
+        pass</code></pre> 
+<p>储存效果：</p> 
+<p><img alt="" class="has" height="432" src="https://img-blog.csdn.net/20180822214930661?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9odW9jaGUxNzU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" width="545"></p> 
+<p>scrapy保存信息的最简单的方法主要有四种，-o 输出指定格式的文件，，命令如下：</p> 
+<p>```<br> scrapy crawl mytianya -o mytianya.json</p> 
+<p>scrapy crawl mytianya -o mytianya.csv</p> 
+<p>scrapy crawl mytianya -o mytianya.xml</p> 
+<p><img alt="" class="has" height="436" src="https://img-blog.csdn.net/20180822215307619?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9odW9jaGUxNzU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" width="812"><img alt="" class="has" height="143" src="https://img-blog.csdn.net/20180822215300717?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9odW9jaGUxNzU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" width="787"></p>
+                        </div>
+</body>
+</html>

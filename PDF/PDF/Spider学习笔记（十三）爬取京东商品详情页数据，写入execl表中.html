@@ -1,0 +1,73 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+<div id="content_views" class="htmledit_views clearfix">
+                        <link rel="stylesheet" href="https://csdnimg.cn/release/blogv2/dist/mobile/css/edit_views_html-b7fdf59250.min.css">
+                        <pre class="has"><code class="language-python">import json
+import re
+import pandas as pd
+import requests
+
+
+def test(addr):
+    # 京东商品原文链接
+    url_ = "%s#crumb-wrap" % addr
+    # 请求头设置参数
+    header_ = {
+        "USER-AGENT": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.67 Safari/537.36"
+    }
+    resp = requests.get(url=url_, headers=header_)
+    # 请求回来的文本内容（格式：字符串）
+    text = resp.text
+    # print(text)
+    # 从文本中查找参数开始拼接新的请求
+    sku_id = re.findall("skuid: (\\d+),", text)
+    cat = re.findall("cat: \\[(.*?)\\],", text)
+    vender_id = re.findall("venderId:(\\d+),", text)
+    # 如果三个参数有且都存在的情况下
+    if sku_id and cat and vender_id:
+        # 拼接新的路由（该链接是从网页中的请求中查找获取）
+        url_01 = "https://c0.3.cn/stock?skuId={}&amp;cat={}&amp;venderId={}&amp;area=19_1601_3637_0".format(
+            sku_id[0], cat[0], vender_id[0])
+        # 开始我的请求，记得加上请求头
+        res = requests.get(url=url_01, headers=header_)
+        # 将请求文本的格式从字符串转换成json
+        json_data = json.loads(res.text)
+        # 从json数据中找到我要的原价和现价信息
+        o_price = json_data.get("stock", "").get("jdPrice").get("m", "")  # 原价
+        c_price = json_data.get("stock", "").get("jdPrice").get("p", "")  # 现价
+        test = json_data.get("stock", "").get("freshEdi", "")  # 现价
+        print(test)
+        o_price_list.append(o_price)
+        c_price_list.append(c_price)
+        return o_price_list, c_price_list
+
+# 定价列表
+o_price_list = []
+# 售价列表
+c_price_list = []
+
+df1 = pd.read_excel("test.xlsx", encoding="unicode_escape")
+print(df1)
+data1 = df1.ix[:, ['地址']].values
+for i in data1:
+    test(i[0])
+print(o_price_list,c_price_list)
+df1["定价"] = o_price_list
+df1["京东价"] = c_price_list
+df1.to_excel("test.xlsx", index=None)
+
+# if __name__ == '__main__':
+#     test()
+</code></pre> 
+<p> <img alt="" class="has" height="530" src="https://img-blog.csdnimg.cn/20191219115619602.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9odW9jaGUxNzU=,size_16,color_FFFFFF,t_70" width="1018"></p> 
+<p> python text.py or run text.py</p> 
+<p><img alt="" class="has" height="118" src="https://img-blog.csdnimg.cn/20191219115650701.png" width="353"></p>
+                        </div>
+</body>
+</html>
