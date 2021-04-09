@@ -1,0 +1,45 @@
+
+    <!doctype html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Document</title>
+    </head>
+    <body>
+    <div id="content_views" class="htmledit_views clearfix">
+                        <link rel="stylesheet" href="https://csdnimg.cn/release/blogv2/dist/mobile/css/edit_views_html-b7fdf59250.min.css">
+                        <p> 暂时没有实际运用过，就随便跑跑看</p> 
+<pre class="has"><code class="language-python">import matplotlib
+from matplotlib import pyplot as plt  # 绘图
+
+# 显示中文
+matplotlib.rcParams["font.sans-serif"] = ["simhei"]  # 配置字体
+matplotlib.rcParams["font.family"] = "sans-serif"
+# (x,y)
+plt.plot([1,2],[3,4],'--',color='r',label='line1')
+plt.xlabel('x轴')
+plt.xlabel('y轴')
+plt.legend()#绘制
+plt.show()
+
+</code></pre> 
+<p> </p> 
+<p> <img alt="" class="has" src="https://img-blog.csdn.net/20180821200755960?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9odW9jaGUxNzU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+<pre class="has"><code class="language-python">import matplotlib
+from matplotlib import pyplot as plt  # 绘图
+
+#显示中文
+matplotlib.rcParams["font.sans-serif"] = ["simhei"]  # 配置字体
+matplotlib.rcParams["font.family"] = "sans-serif"
+
+#柱状图
+plt.bar([1],[123],label="广州")
+plt.bar([2],[23],label="苏州")
+plt.bar([4],[63],label="杭州")
+plt.legend()
+plt.show()</code></pre> 
+<p><img alt="" class="has" src="https://img-blog.csdn.net/20180821200847746?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9odW9jaGUxNzU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p>
+                        </div>
+    </body>
+    </html>
+    
