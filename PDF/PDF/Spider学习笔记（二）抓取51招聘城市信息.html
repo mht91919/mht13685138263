@@ -39,3 +39,43 @@ if __name__ == '__main__':
     </body>
     </html>
     
+    <!doctype html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Document</title>
+    </head>
+    <body>
+    <div id="content_views" class="htmledit_views clearfix">
+                        <link rel="stylesheet" href="https://csdnimg.cn/release/blogv2/dist/mobile/css/edit_views_html-b7fdf59250.min.css">
+                        <pre class="has"><code class="language-python">import requests
+import lxml
+from lxml import etree
+
+headers = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+}
+
+cityUrl = 'https://jobs.51job.com/'
+
+def getCity(url):
+    response = requests.get(url,headers=headers)
+
+    html = response.content.decode('gbk')
+
+    mytree = lxml.etree.HTML(html)
+
+    cityList = mytree.xpath('/html/body/div[2]/div[2]/div[2]/div[1]/a')
+    for city in cityList:
+        cityName = city.xpath('./text()')[0]
+        cityUrl = city.xpath('./@href')[0]
+        print(cityName,cityUrl)
+
+if __name__ == '__main__':
+
+    getCity(cityUrl)</code></pre> 
+<p> </p>
+                        </div>
+    </body>
+    </html>
+    

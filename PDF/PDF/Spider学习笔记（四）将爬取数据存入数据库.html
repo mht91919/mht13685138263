@@ -33,3 +33,37 @@ conn.close()</code></pre>
     </body>
     </html>
     
+    <!doctype html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Document</title>
+    </head>
+    <body>
+    <div id="content_views" class="htmledit_views clearfix">
+                        <link rel="stylesheet" href="https://csdnimg.cn/release/blogv2/dist/mobile/css/edit_views_html-b7fdf59250.min.css">
+                        <pre class="has"><code class="language-python">import pymysql
+conn = pymysql.connect(host='127.0.0.1',user='root',password='123456',
+                       database='world',port=3306,charset='utf8')
+
+#游标
+cur = conn.cursor()
+
+#读取
+with open('tencent.txt','r',errors='ignore',encoding='utf-8') as f :
+    jobList = f.readlines()
+    for job in jobList:
+        job = eval(job)
+        sql = "INSERT INTO tencent(jobname,joburl,jobIofo,jobcompany,jobmoney,jobtime)VALUES " \
+              "(%r,%r,%r,%r,%r,%r)" % (job[0], job[1], job[2], job[3], job[4], job[5])
+        print(job)
+        print(sql)
+        cur.execute(sql)
+        conn.commit()
+cur.close()
+conn.close()</code></pre> 
+<p> </p>
+                        </div>
+    </body>
+    </html>
+    
