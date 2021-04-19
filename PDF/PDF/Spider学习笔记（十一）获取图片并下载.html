@@ -123,3 +123,65 @@ if __name__ == '__main__':
     </body>
     </html>
     
+    <!doctype html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Document</title>
+    </head>
+    <body>
+    <div id="content_views" class="htmledit_views clearfix">
+                        <link rel="stylesheet" href="https://csdnimg.cn/release/blogv2/dist/mobile/css/edit_views_html-b7fdf59250.min.css">
+                        <p>话不多说，上代码</p> 
+<pre class="has"><code class="language-python"># -*- coding:utf-8 -*-
+'''
+@Time    : 2018/8/20 9:10
+@Author  : Fate
+@File    : house.py
+'''
+
+import requests
+import lxml
+from lxml import etree
+import json
+import time
+
+
+headers = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36",
+}
+
+
+def getHouseInfo(url):
+    '''
+    获取房子信息
+    :param url: 页数url
+    :return:
+    '''
+    # url = "https://gz.lianjia.com/ershoufang/pg1/"
+
+    response = requests.get(url, headers=headers)
+    # print(response.text)
+
+
+    mytree = lxml.etree.HTML(response.text)
+
+
+    oneImg = mytree.xpath('/html/body/div[4]/div[1]/ul/li[1]/a/img/@data-original')[0]
+    return oneImg
+
+if __name__ == '__main__':
+
+    url = "https://gz.lianjia.com/ershoufang/pg1/"
+    oneimg = getHouseInfo(url)
+    r = requests.get(oneimg)
+    r.raise_for_status()
+    with open('test.jpg', 'wb') as f:
+        f.write(r.content)
+
+</code></pre> 
+<p><img alt="" class="has" height="180" src="https://img-blog.csdn.net/2018082317163764?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9odW9jaGUxNzU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" width="314"></p>
+                        </div>
+    </body>
+    </html>
+    

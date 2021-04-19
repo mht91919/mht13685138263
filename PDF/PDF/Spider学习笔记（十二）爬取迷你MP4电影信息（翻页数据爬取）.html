@@ -207,3 +207,107 @@ for category in getcategory(url):
     </body>
     </html>
     
+    <!doctype html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Document</title>
+    </head>
+    <body>
+    <div id="content_views" class="htmledit_views clearfix">
+                        <link rel="stylesheet" href="https://csdnimg.cn/release/blogv2/dist/mobile/css/edit_views_html-b7fdf59250.min.css">
+                        <pre class="has"><code class="language-python">import requests
+import lxml
+from lxml import etree
+
+
+headers = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+}
+
+
+#拿类别名称
+def getcategory(url):
+    response = requests.get(url,headers=headers)
+    html = response.content.decode('utf-8')
+    # print(html)
+    mytree = lxml.etree.HTML(html)
+    categoryList = mytree.xpath('/html/body/div[2]/div/div[1]/div[1]/table/tbody/tr[4]/td[2]/a/text()')
+    categoryList.pop(0)
+    return categoryList
+
+
+#拿类别的页数
+def getpagenum(url):
+    response = requests.get(url,headers=headers)
+    html = response.content.decode('utf-8')
+    mytree = lxml.etree.HTML(html)
+    pagenum = mytree.xpath('/html/body/div[2]/div/div[2]/ul/li[last()]/a/@data-ci-pagination-page')[0]
+    return pagenum
+
+
+#拿详情页的url
+def getpage(url):
+    pagelist = []
+    response = requests.get(url,headers=headers)
+    html = response.content.decode('utf-8')
+    mytree = lxml.etree.HTML(html)
+    pageList = mytree.xpath('/html/body/div[2]/div/div[1]/div[2]/div[@class="col-xs-1-5 col-sm-4 col-xs-6 movie-item"]')
+    for page in pageList:
+        movieurl = page.xpath('./div[@class="movie-item-in"]/a/@href')[0]
+        pagelist.append(movieurl)
+    return pagelist
+
+
+#详情页数据
+def getmovie(url):
+    response = requests.get(url,headers=headers)
+    html = response.content.decode('utf-8')
+    # print(html)
+    mytree = lxml.etree.HTML(html)
+    movieList = mytree.xpath('/html/body/div[2]/div/div[1]/div/div[1]/div[2]/div')
+    for movie in movieList:
+        #电影名
+        movie_name = movie.xpath('./h1/text()')[0]
+        #导演
+        movie_director = movie.xpath('./p/a/text()')[0]
+        #制片地区
+        movie_adder = movie.xpath('./p[5]/a/text()')[0]
+        #语言
+        movie_language = movie.xpath('./p[6]/text()')[0]
+        #上映时间
+        movie_update_time = movie.xpath('./p[7]/text()')[0]
+
+        #演员
+        movie_actor_list = movie.xpath('./p[@id="casts"]')
+        for movie_actor in movie_actor_list:
+            movie_actor_name = movie_actor.xpath('./a[@target="_blank"]/text()')
+            # print(" ".join(movie_actor_name))
+            
+        #分类
+        movie_category_list = movie.xpath('./p[4]')
+        for movie_category in movie_category_list:
+            movie_categort_name = movie_category.xpath('./a/text()')
+            # print(movie_categort_name)
+        print(movie_name, movie_director, movie_adder, movie_language, movie_update_time,
+              " ".join(movie_actor_name)," ".join(movie_categort_name))
+
+
+url = 'http://www.minimp4.com/movie'
+getcategory(url)
+for category in getcategory(url):
+    pageurl = 'http://www.minimp4.com/movie/?tag=%s' % category
+    pagenum = getpagenum(pageurl)
+    for i in pagenum:
+        pageurl = 'http://www.minimp4.com/movie/?tag=%s&amp;page=%s' % (category,i)
+        movieurl = getpage(pageurl)
+        for url in movieurl:
+            getmovie(url)
+
+
+</code></pre> 
+<p> </p>
+                        </div>
+    </body>
+    </html>
+    

@@ -117,3 +117,62 @@ plt.savefig('python.png')
     </body>
     </html>
     
+    <!doctype html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Document</title>
+    </head>
+    <body>
+    <div id="content_views" class="htmledit_views clearfix">
+                        <link rel="stylesheet" href="https://csdnimg.cn/release/blogv2/dist/mobile/css/edit_views_html-b7fdf59250.min.css">
+                        <h2>先看一下实现效果</h2> 
+<p><img alt="" class="has" src="https://img-blog.csdn.net/20180821184948658?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9odW9jaGUxNzU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+<h2>实现代码</h2> 
+<pre class="has"><code class="language-python">import jieba
+from PIL import Image  # 图片处理
+import numpy as np  # 科学运算
+from wordcloud import WordCloud, STOPWORDS  # 词云
+import matplotlib
+from matplotlib import pyplot as plt  # 绘图
+
+# 显示中文
+matplotlib.rcParams["font.sans-serif"] = ["simhei"]  # 配置字体
+matplotlib.rcParams["font.family"] = "sans-serif"
+
+# 打开要显示的文本文件
+pythonInfo = open('./python.txt', 'r', encoding='utf-8', errors='ignore')
+
+# 切割
+myPythonCut = jieba.cut(pythonInfo.read(), cut_all=True)
+pythonInfo.close()
+
+myPythonCut = ' '.join(myPythonCut)
+
+# RGB格式矩阵
+# 添加背景图
+bg = np.array(Image.open('./ren.jpg'))
+print(bg)
+
+myWordCloud = WordCloud(font_path='./simkai.ttf',  # 字体
+                        width=800, height=400, # 图片大小
+                        mask=bg,  # 字体颜色
+                        scale=1,  # 缩放
+                        max_words=200,  # 词云最大数量
+                        min_font_size=4,  # 最小字体
+                        stopwords=STOPWORDS,  # 停止词
+                        random_state=90,  # 随机状态
+                        background_color='white',  # 背景颜色
+                        ).generate(myPythonCut)  # 生成词云
+
+plt.figimage(myWordCloud)
+# plt.show()
+# 保存
+plt.savefig('python.png')
+
+#savefig 和 show 不能同时运行</code></pre> 
+<p> </p>
+                        </div>
+    </body>
+    </html>
+    
